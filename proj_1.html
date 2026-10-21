@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineWave - Pega Ticket Booking Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen font-sans">
+
+  <!-- Header -->
+  <header class="bg-gray-800 border-b border-gray-700 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center space-x-3">
+      <div class="bg-indigo-600 p-2 rounded-lg text-white">
+        <i class="fa-solid fa-ticket text-xl"></i>
+      </div>
+      <div>
+        <h1 class="font-bold text-xl tracking-wide text-white">CineWave <span class="text-indigo-400 text-sm font-normal">| Pega Platform v25.x</span></h1>
+        <p class="text-xs text-gray-400">Enterprise Ticket Booking System</p>
+      </div>
+    </div>
+    <div class="flex items-center space-x-4">
+      <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs px-3 py-1 rounded-full font-mono flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> App Studio Active
+      </span>
+      <span class="text-xs text-gray-400">Operator: <strong class="text-gray-200">author@uplus</strong></span>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Left Column: Case Lifecycle Wizard -->
+    <div class="lg:col-span-2 space-y-6">
+
+      <!-- Case Lifecycle Header -->
+      <div class="bg-gray-800 p-5 rounded-xl border border-gray-700">
+        <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Pega Case Lifecycle Status</h2>
+        <div class="flex items-center justify-between text-xs font-medium">
+          <div id="stage-1" class="flex-1 text-center py-2 px-1 rounded-lg bg-indigo-600 text-white font-semibold">
+            1. Request
+          </div>
+          <div class="px-2 text-gray-600">➔</div>
+          <div id="stage-2" class="flex-1 text-center py-2 px-1 rounded-lg bg-gray-700 text-gray-400">
+            2. Review & Cost
+          </div>
+          <div class="px-2 text-gray-600">➔</div>
+          <div id="stage-3" class="flex-1 text-center py-2 px-1 rounded-lg bg-gray-700 text-gray-400">
+            3. Fulfillment & SLA
+          </div>
+          <div class="px-2 text-gray-600">➔</div>
+          <div id="stage-4" class="flex-1 text-center py-2 px-1 rounded-lg bg-gray-700 text-gray-400">
+            4. Resolved
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 1: Request Movie Ticket -->
+      <div id="step-1-card" class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-xl">
+        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-user-pen text-indigo-400"></i> US-001: Submit Movie Ticket Request
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">Customer Name</label>
+            <input type="text" id="custName" value="Alex Morgan" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">Customer Email</label>
+            <input type="email" id="custEmail" value="alex.morgan@example.com" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">Select Theatre</label>
+            <select id="theatreSelect" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+              <option value="CineWave Downtown Mall">CineWave Downtown Mall</option>
+              <option value="CineWave IMAX Arena">CineWave IMAX Arena</option>
+              <option value="CineWave Grand Palace">CineWave Grand Palace</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">Select Movie</label>
+            <select id="movieSelect" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+              <option value="Inception 2: Beyond Reality">Inception 2: Beyond Reality</option>
+              <option value="Cyber Odyssey 2099">Cyber Odyssey 2099</option>
+              <option value="The Quantum Realm">The Quantum Realm</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">Show Type (US-010 Routing)</label>
+            <select id="showType" onchange="recalculateCost()" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+              <option value="Standard">Standard ($12/ticket)</option>
+              <option value="IMAX 3D">IMAX 3D ($20/ticket)</option>
+              <option value="VIP Recliner">VIP Recliner ($30/ticket)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs text-gray-400 mb-1">Ticket Quantity</label>
+            <input type="number" id="ticketQty" value="2" min="1" max="10" onchange="recalculateCost()" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+          </div>
+        </div>
+
+        <button onclick="goToStep2()" class="mt-6 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition">
+          Proceed to Review & Availability Check ➔
+        </button>
+      </div>
+
+      <!-- Step 2: Review & Cost Calculation (Hidden by default) -->
+      <div id="step-2-card" class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-xl hidden">
+        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-calculator text-indigo-400"></i> US-002 to US-006: Availability & Cost Calculation
+        </h3>
+
+        <!-- Availability Banner -->
+        <div class="mb-4 bg-emerald-500/10 border border-emerald-500/30 p-3 rounded-lg flex items-center gap-3 text-emerald-400 text-xs">
+          <i class="fa-solid fa-circle-check text-base"></i>
+          <div>
+            <strong>US-002 Availability Status:</strong> Selected show has 42 available seats remaining.
+          </div>
+        </div>
+
+        <div class="bg-gray-900 p-4 rounded-lg space-y-2 text-sm mb-6 border border-gray-700">
+          <div class="flex justify-between text-gray-400">
+            <span>Show Type:</span> <span id="summaryShowType" class="text-gray-200">IMAX 3D</span>
+          </div>
+          <div class="flex justify-between text-gray-400">
+            <span>Ticket Quantity:</span> <span id="summaryQty" class="text-gray-200">2</span>
+          </div>
+          <div class="flex justify-between text-gray-400">
+            <span>Subtotal:</span> <span id="summarySubtotal" class="text-gray-200">$40.00</span>
+          </div>
+          <div class="flex justify-between text-gray-400">
+            <span>Taxes & Fees (10%):</span> <span id="summaryTax" class="text-gray-200">$4.00</span>
+          </div>
+          <div class="border-t border-gray-700 pt-2 flex justify-between font-bold text-base text-white">
+            <span>Total Booking Cost (US-003):</span> <span id="summaryTotal" class="text-indigo-400">$44.00</span>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <button onclick="goToStep1()" class="w-1/3 bg-gray-700 hover:bg-gray-600 text-gray-200 py-2.5 rounded-lg transition text-sm">
+            ⬅ Edit Details
+          </button>
+          <button onclick="goToStep3()" class="w-2/3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">
+            Confirm & Route Request (US-004) ➔
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: Routing, SLA & Final Processing -->
+      <div id="step-3-card" class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-xl hidden">
+        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-network-wired text-indigo-400"></i> US-007, US-009, US-010: Routing & SLA Rules
+        </h3>
+
+        <div class="space-y-4 mb-6 text-xs">
+          <div class="bg-gray-900 p-3 rounded border border-gray-700">
+            <span class="text-gray-400 block">US-010 Workbasket Routing:</span>
+            <span id="routingTarget" class="text-indigo-300 font-mono text-sm">Routed to: VIP_IMAX_Workbasket</span>
+          </div>
+          <div class="bg-gray-900 p-3 rounded border border-gray-700 flex justify-between items-center">
+            <div>
+              <span class="text-gray-400 block">US-009 Service Level Agreement (SLA):</span>
+              <span class="text-amber-400 font-mono">Goal: 30 Mins | Deadline: 2 Hours</span>
+            </div>
+            <span class="bg-amber-500/10 text-amber-400 px-2 py-1 rounded text-xs">Timer Running</span>
+          </div>
+        </div>
+
+        <button onclick="completeBooking()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-check-circle"></i> Approve & Issue Ticket (US-007 / US-008)
+        </button>
+      </div>
+
+      <!-- Step 4: Resolved Completed Screen -->
+      <div id="step-4-card" class="bg-gray-800 p-6 rounded-xl border border-emerald-500/30 text-center hidden">
+        <div class="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-1">Booking Resolved-Completed!</h3>
+        <p class="text-xs text-gray-400 mb-6">Case ID: <span class="font-mono text-indigo-400">B-10042</span> | Confirmation sent to customer email.</p>
+        
+        <button onclick="resetFlow()" class="bg-gray-700 hover:bg-gray-600 text-gray-200 text-xs px-4 py-2 rounded-lg">
+          Create New Booking Request
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Pega Data Inspector & Email Trigger Simulator -->
+    <div class="space-y-6">
+
+      <!-- Pega Data Clipboard Inspector -->
+      <div class="bg-gray-800 p-5 rounded-xl border border-gray-700">
+        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 flex justify-between">
+          <span><i class="fa-solid fa-code"></i> Pega Clipboard Inspector</span>
+          <span class="text-indigo-400 font-mono">pyWorkPage</span>
+        </h3>
+        <pre id="clipboardView" class="bg-gray-900 p-3 rounded text-[11px] font-mono text-emerald-400 overflow-x-auto h-48 border border-gray-700">
+{
+  "pxObjClass": "CineWave-Data-Booking",
+  "pyID": "B-10042",
+  "CustomerName": "Alex Morgan",
+  "Theatre": "CineWave Downtown Mall",
+  "Movie": "Inception 2",
+  "ShowType": "Standard",
+  "Quantity": 2,
+  "TotalPrice": 26.40,
+  "pyCaseStatus": "New"
+}
+        </pre>
+      </div>
+
+      <!-- US-008: Automated Email Notification Preview -->
+      <div class="bg-gray-800 p-5 rounded-xl border border-gray-700">
+        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-envelope text-indigo-400"></i> US-008 Email Notification Trigger
+        </h3>
+        <div id="emailPreview" class="bg-gray-900 p-4 rounded-lg border border-gray-700 text-xs text-gray-300 space-y-2 opacity-50">
+          <div class="border-b border-gray-800 pb-2">
+            <span class="text-gray-500">To:</span> <span id="emailTo">alex.morgan@example.com</span><br>
+            <span class="text-gray-500">Subject:</span> Booking Confirmation - CineWave Entertainment
+          </div>
+          <p class="text-emerald-400 font-semibold pt-1">🎉 Your tickets are confirmed!</p>
+          <p>Thank you for booking with CineWave. Show details:</p>
+          <ul class="list-disc pl-4 text-gray-400 space-y-1">
+            <li id="emailMovie">Movie: Inception 2</li>
+            <li id="emailTheatre">Theatre: CineWave Downtown Mall</li>
+            <li id="emailTotal">Total Paid: $26.40</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    let qty = 2;
+    let pricePerTicket = 12;
+
+    function recalculateCost() {
+      const showType = document.getElementById('showType').value;
+      qty = parseInt(document.getElementById('ticketQty').value) || 1;
+
+      if (showType === 'Standard') pricePerTicket = 12;
+      else if (showType === 'IMAX 3D') pricePerTicket = 20;
+      else if (showType === 'VIP Recliner') pricePerTicket = 30;
+
+      const subtotal = qty * pricePerTicket;
+      const tax = subtotal * 0.10;
+      const total = subtotal + tax;
+
+      document.getElementById('summaryShowType').innerText = showType;
+      document.getElementById('summaryQty').innerText = qty;
+      document.getElementById('summarySubtotal').innerText = `$${subtotal.toFixed(2)}`;
+      document.getElementById('summaryTax').innerText = `$${tax.toFixed(2)}`;
+      document.getElementById('summaryTotal').innerText = `$${total.toFixed(2)}`;
+
+      // Update Routing Rule Simulation
+      const routingTarget = document.getElementById('routingTarget');
+      if (showType === 'IMAX 3D' || showType === 'VIP Recliner') {
+        routingTarget.innerText = "Routed to: VIP_IMAX_Workbasket (High Priority)";
+      } else {
+        routingTarget.innerText = "Routed to: Standard_BoxOffice_Workbasket";
+      }
+
+      // Update Clipboard simulation
+      const pyWorkPage = {
+        "pxObjClass": "CineWave-Data-Booking",
+        "pyID": "B-10042",
+        "CustomerName": document.getElementById('custName').value,
+        "Theatre": document.getElementById('theatreSelect').value,
+        "Movie": document.getElementById('movieSelect').value,
+        "ShowType": showType,
+        "Quantity": qty,
+        "TotalPrice": total.toFixed(2),
+        "pyCaseStatus": "Pending-Review"
+      };
+      document.getElementById('clipboardView').innerText = JSON.stringify(pyWorkPage, null, 2);
+    }
+
+    function goToStep1() {
+      showCard(1);
+    }
+
+    function goToStep2() {
+      recalculateCost();
+      showCard(2);
+    }
+
+    function goToStep3() {
+      showCard(3);
+    }
+
+    function completeBooking() {
+      showCard(4);
+      document.getElementById('emailPreview').classList.remove('opacity-50');
+      document.getElementById('emailTo').innerText = document.getElementById('custEmail').value;
+      document.getElementById('emailMovie').innerText = `Movie: ${document.getElementById('movieSelect').value}`;
+      document.getElementById('emailTheatre').innerText = `Theatre: ${document.getElementById('theatreSelect').value}`;
+      document.getElementById('emailTotal').innerText = `Total Paid: ${document.getElementById('summaryTotal').innerText}`;
+    }
+
+    function resetFlow() {
+      document.getElementById('emailPreview').classList.add('opacity-50');
+      showCard(1);
+    }
+
+    function showCard(step) {
+      [1, 2, 3, 4].forEach(i => {
+        const card = document.getElementById(`step-${i}-card`);
+        const stageHeader = document.getElementById(`stage-${i}`);
+        if (i === step) {
+          card.classList.remove('hidden');
+          stageHeader.className = "flex-1 text-center py-2 px-1 rounded-lg bg-indigo-600 text-white font-semibold";
+        } else {
+          card.classList.add('hidden');
+          stageHeader.className = "flex-1 text-center py-2 px-1 rounded-lg bg-gray-700 text-gray-400";
+        }
+      });
+    }
+
+    recalculateCost();
+  </script>
+</body>
+</html>
