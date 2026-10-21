@@ -24,3 +24,51 @@ An automated low-code **Movie Ticket Booking Management System** built on **Pega
 ## 🏗️ Pega Architecture & Design Details
 
 ### 1. Case Lifecycle Design (`Ticket Booking` Case Type)
+* **Create Stage**: Captures customer details, location, theatre, movie, show time, and seat count.
+* **Review & Validate Stage**: Automated availability check; user confirmation step[cite: 1].
+* **Fulfillment Stage**: Payment processing/cash desk verification and automated email trigger[cite: 1].
+
+---
+
+### 2. Data Model & Data Types
+
+| Data Type | Field Name | Type | Description |
+| :--- | :--- | :--- | :--- |
+| **`CustomerDetails`** | `FullName`, `Email`, `Phone` | Text, Email, Phone | Customer personal contact information. |
+| **`ShowDetails`** | `TheatreName`, `MovieName`, `ShowType`, `ShowTime` | Picklist / Text | Metadata for theatres (Standard, VIP, IMAX) and movies. |
+| **`BookingDetails`** | `SeatCategory`, `Quantity`, `UnitPrice`, `TotalPrice` | Text, Integer, Currency | Seat details & dynamic pricing values. |
+
+---
+
+### 3. User Stories Implemented
+
+* **`US-001` Submit Movie Ticket Request**: User form with data validation for customer & show inputs[cite: 1].
+* **`US-002` Check Show Availability**: Automated rule evaluating available inventory against requested tickets[cite: 1].
+* **`US-003` Calculate Booking Cost**: Data Transform/Declare Expression calculating `TotalPrice = (Quantity * UnitPrice) + Taxes`[cite: 1].
+* **`US-004` Confirm Booking Request**: Review screen capturing explicit customer approval prior to locking booking[cite: 1].
+* **`US-005` Maintain Movie & Show Data**: Data Records management in Pega App Studio[cite: 1].
+* **`US-006` Review Booking Details**: Summarized review harness before final submission[cite: 1].
+* **`US-007` Process Ticket Booking**: Assignment step for Box Office staff / automated payment approval[cite: 1].
+* **`US-008` Notify Booking Confirmation**: Correspondence rule triggering automated HTML ticket confirmation email[cite: 1].
+* **`US-009` Define Booking SLA**: Goal (30 mins), Deadline (2 hrs) SLA configured on approval assignments[cite: 1].
+* **`US-010` Route Booking Request by Show Type**: Worklist/Workbasket routing rule based on `ShowType` (e.g., IMAX → VIP Workbasket, Standard → General Queue)[cite: 1].
+
+---
+
+## 📂 Repository Structure
+
+├── documentation/
+│   ├── Architecture_Diagram.png
+│   ├── Case_Lifecycle.png
+│   ├── Data_Model_ERD.png
+│   └── CineWave_Project_Submission_Report.pdf
+├── screenshots/
+│   ├── US001_SubmitRequest.png
+│   ├── US003_CostCalculation.png
+│   ├── US008_EmailNotification.png
+│   └── US010_RoutingAndSLA.png
+└── README.md
+---
+
+## 📹 Video Demo Link
+[Watch Demo Video on YouTube]
